@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PotholeAI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bg-shapes {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+        }
+        .shape-1 { width: 400px; height: 400px; background: var(--neon-cyan); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
+        .shape-2 { width: 300px; height: 300px; background: var(--neon-purple); bottom: -50px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
+        @keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-30px); } }
+        
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+        .login-box h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+        .login-box > p {
+            color: var(--text-muted, #8888aa);
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+        
+        .login-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 25px;
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted, #8888aa);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .login-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .login-tab.active { background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(191,0,255,0.15)); color: var(--neon-cyan); border: 1px solid rgba(0,240,255,0.2); }
+        .login-tab i { font-size: 0.9rem; }
+        
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.85rem; color: var(--text-muted, #aaaacc); }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s;
+        }
+        .form-group input:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,240,255,0.15); }
+        .form-group input::placeholder { color: rgba(255,255,255,0.2); }
+        
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,240,255,0.3);
+        }
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 0.85rem;
+        }
+        .back-link {
+            margin-top: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted, #8888aa);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--neon-cyan); }
+        .corp-info { font-size: 0.75rem; color: var(--text-muted, #666688); margin-top: 12px; text-align: left; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+        @media (max-width: 768px) { .login-box { padding: 25px 20px; } .login-box h1 { font-size: 1.4rem; } .login-tab { font-size: 0.75rem; padding: 10px 8px; } .login-tab i { font-size: 0.75rem; } .form-group input { padding: 12px 14px; font-size: 0.9rem; } .btn-login { padding: 14px; font-size: 0.9rem; } .shape-1, .shape-2 { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo-icon" style="width: 60px; height: 60px; margin: 0 auto 15px;">
+                <i class="fas fa-road" style="font-size: 1.5rem;"></i>
+            </div>
+            <h1 id="loginTitle">Admin Login</h1>
+            <p id="loginSubtitle">Enter credentials to access dashboard</p>
+
+            <div class="login-tabs">
+                <button class="login-tab active" data-role="admin" onclick="switchTab('admin')">
+                    <i class="fas fa-user-shield"></i> Admin
+                </button>
+                <button class="login-tab" data-role="corporation" onclick="switchTab('corporation')">
+                    <i class="fas fa-city"></i> Corporation
+                </button>
+            </div>
+
+            {% if error %}
+            <div class="error" id="errorMsg">{{ error }}</div>
+            {% endif %}
+            <div class="error" id="dynamicError" style="display:none;"></div>
+
+            <form method="POST" id="loginForm">
+                <input type="hidden" name="role" id="roleInput" value="admin">
+                <div class="form-group">
+                    <label id="userLabel"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" name="username" id="usernameInput" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label id="passLabel"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" name="password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> <span id="btnText">Login as Admin</span>
+                </button>
+            </form>
+            <div class="corp-info" id="corpHint" style="display:none;">
+                <i class="fas fa-info-circle"></i> Corporation login for Municipal authorities to view & manage pothole reports
+            </div>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(role) {
+            document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.login-tab[data-role="${role}"]`).classList.add('active');
+            document.getElementById('roleInput').value = role;
+            document.getElementById('dynamicError').style.display = 'none';
+            
+            if (role === 'admin') {
+                document.getElementById('loginTitle').textContent = 'Admin Login';
+                document.getElementById('loginSubtitle').textContent = 'Enter credentials to access dashboard';
+                document.getElementById('userLabel').innerHTML = '<i class="fas fa-user"></i> Username';
+                document.getElementById('usernameInput').placeholder = 'Enter username';
+                document.getElementById('btnText').textContent = 'Login as Admin';
+                document.getElementById('loginBtn').style.background = 'linear-gradient(135deg, var(--neon-cyan), var(--neon-purple))';
+                document.getElementById('corpHint').style.display = 'none';
+            } else {
+                document.getElementById('loginTitle').textContent = 'Corporation Login';
+                document.getElementById('loginSubtitle').textContent = 'Municipal authority access portal';
+                document.getElementById('userLabel').innerHTML = '<i class="fas fa-id-card"></i> Corporation ID';
+                document.getElementById('usernameInput').placeholder = 'Enter corporation ID';
+                document.getElementById('btnText').textContent = 'Login as Corporation';
+                document.getElementById('loginBtn').style.background = 'linear-gradient(135deg, var(--neon-purple), var(--neon-pink))';
+                document.getElementById('corpHint').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

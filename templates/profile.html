@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - PotholeAI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        @media (max-width: 768px) { .login-box { padding: 25px 20px; } .login-box h1 { font-size: 1.4rem; } }
+        .bg-shapes { position: fixed; top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none;z-index:0; }
+        .shape { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.15; }
+        .shape-1 { width:400px;height:400px;background:var(--neon-cyan);top:-100px;right:-100px;animation:float 8s ease-in-out infinite; }
+        .shape-2 { width:300px;height:300px;background:var(--neon-purple);bottom:-50px;left:-50px;animation:float 10s ease-in-out infinite reverse; }
+        @keyframes float { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-30px)} }
+        .login-container { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; position:relative; z-index:1; width:100%; }
+        .login-box { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:40px; width:100%; max-width:440px; text-align:center; backdrop-filter:blur(20px); }
+        .login-box h1 { font-family:'Space Grotesk',sans-serif; font-size:1.8rem; margin-bottom:6px; }
+        .login-box > p { color:var(--text-muted,#8888aa); margin-bottom:25px; font-size:0.9rem; }
+        .user-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 18px; background:rgba(0,240,255,0.1); border:1px solid rgba(0,240,255,0.2); border-radius:20px; font-size:0.85rem; margin-bottom:20px; color:var(--neon-cyan); }
+        .form-group { margin-bottom:18px; text-align:left; }
+        .form-group label { display:block; margin-bottom:8px; font-weight:500; font-size:0.85rem; color:var(--text-muted,#aaaacc); }
+        .form-group input { width:100%; padding:14px 16px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:var(--text-primary); font-size:1rem; font-family:'Outfit',sans-serif; transition:all 0.3s; }
+        .form-group input:focus { outline:none; border-color:var(--neon-cyan); box-shadow:0 0 15px rgba(0,240,255,0.15); }
+        .btn-save { width:100%; padding:16px; background:linear-gradient(135deg,var(--neon-green),var(--neon-cyan)); border:none; border-radius:14px; color:white; font-family:'Space Grotesk',sans-serif; font-size:1.05rem; font-weight:600; cursor:pointer; margin-top:8px; transition:all 0.3s; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .btn-save:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,255,136,0.3); }
+        .alert { padding:14px; border-radius:12px; margin-bottom:20px; font-size:0.85rem; }
+        .alert-error { background:rgba(255,0,0,0.1); border:1px solid rgba(255,0,0,0.3); color:#ff6b6b; }
+        .alert-success { background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); color:#00ff88; }
+        .back-link { margin-top:18px; display:inline-flex; align-items:center; gap:6px; color:var(--text-muted,#8888aa); text-decoration:none; font-size:0.85rem; transition:color 0.3s; }
+        .back-link:hover { color:var(--neon-cyan); }
+        .divider { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:20px 0; }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes"><div class="shape shape-1"></div><div class="shape shape-2"></div></div>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo-icon" style="width:60px;height:60px;margin:0 auto 15px;"><i class="fas fa-user-cog" style="font-size:1.5rem;"></i></div>
+            <h1>Profile Settings</h1>
+            <div class="user-badge">
+                <i class="fas {{ 'fa-user-shield' if current_user.is_admin else 'fa-city' }}"></i>
+                {{ current_user.username }}
+                <span style="color:var(--text-muted);font-size:0.75rem;">({{ 'Admin' if current_user.is_admin else 'Corporation' }})</span>
+            </div>
+            {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+            {% if success %}<div class="alert alert-success">{{ success }}</div>{% endif %}
+            <form method="POST">
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Current Password</label>
+                    <input type="password" name="current_password" required placeholder="Enter current password">
+                </div>
+                <hr class="divider">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> New Username</label>
+                    <input type="text" name="new_username" placeholder="Leave blank to keep current" value="{{ current_user.username }}">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-key"></i> New Password</label>
+                    <input type="password" name="new_password" placeholder="Leave blank to keep current">
+                </div>
+                <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+            </form>
+            {% if current_user.is_admin %}
+            <a href="/admin" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            {% else %}
+            <a href="/corporation" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
